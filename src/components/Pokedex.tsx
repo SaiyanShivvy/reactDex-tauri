@@ -1,49 +1,54 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import axios from "axios";
-import PokemonCard from "./PokedexCard";
+import React, { useEffect, useState } from "react";
+import { getPokemonList } from "../services/apiServices";
 import PokedexCard from "./PokedexCard";
 
-function PokemonList(): any {
-	const PokeAPI = "https://pokeapi.co/api/v2/pokemon?limit=16";
-	let [pokedex, setPokedex] = useState([]);
-	let [nextPage, setNextPage] = useState(null);
-	let [prevPage, setPrevPage] = useState(null);
+const PokemonList: React.FC = (): JSX.Element => {
+  let [pokedex, setPokedex] = useState<any[]>([]);
+  const [nextPage, setNextPage] = useState<string | null>(null);
+  const [prevPage, setPrevPage] = useState<string | null>(null);
 
-	function paginate() {}
+  const fetchPokemonData = async (limit: number) => {
+    try {
+      const data = await getPokemonList(limit);
+      setPokedex(data.results);
+      setNextPage(data.next);
+      setPrevPage(data.previous);
+    } catch (error) {
+      console.error("Error fetching Pokemon data:", error);
+    }
+  };
 
-	useEffect(() => {
-		function getPokemon(url: string) {
-			axios
-				.get(url)
-				.then((res) => {
-					let data = res.data;
-					setPokedex(data.results);
-					if (data.next != null) {
-						setNextPage(data.next);
-					}
-					if (data.previous != null) {
-						setPrevPage(data.previous);
-					}
-					console.log(pokedex);
-					console.log(prevPage);
-					console.log(nextPage);
-				})
-				.catch((error) => console.error(error));
-		}
-		getPokemon(PokeAPI);
-	}, []);
+  const paginate = (url: string | null) => {
+    if (url) {
+      fetchPokemonData(16); // Adjust the limit as needed
+    }
+  };
 
-	if (!pokedex.length) return <h3>Loading...</h3>;
+  useEffect(() => {
+    fetchPokemonData(16); // Adjust the limit as needed
+  }, []);
 
-	return (
-		<>
-			<div>
-				{pokedex.map((pokemon: any) => (
-					<PokedexCard key={pokemon.name} pokemon={pokemon} />
-				))}
-			</div>
-		</>
-	);
-}
+  if (!pokedex.length) return <h3>Loading...</h3>;
+
+  return (
+    <>
+      <div className="flex flex-wrap justify-center">
+        {pokedex.map((pokemon: any) => (
+          <div key={pokemon.name} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
+            <PokedexCard pokemon={pokemon} />
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center mt-4">
+        <button onClick={() => paginate(prevPage)} disabled={!prevPage}>
+          Previous
+        </button>
+        <button onClick={() => paginate(nextPage)} disabled={!nextPage}>
+          Next
+        </button>
+      </div>
+    </>
+  );
+};
 
 export default PokemonList;
