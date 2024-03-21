@@ -1,49 +1,115 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import {
+  calculateStatPercentage,
+  convertUnits,
+  getFormattedStats,
+} from "../utility/utility";
 
-interface PokemonDetailsProps {
+interface Ability {
+  name: string;
   url: string;
 }
 
-interface PokemonData {
-  name: string;
-  height: number;
-  weight: number;
-  // Add more properties as needed
+interface AbilityDetails {
+  ability: Ability;
+  is_hidden: boolean;
+  slot: number;
 }
 
-const PokemonDetails: React.FC<PokemonDetailsProps> = ({ url }) => {
-  const [pokemonData, setPokemonData] = useState<PokemonData | null>(null);
+interface Form {
+  name: string;
+  url: string;
+}
 
-  useEffect(() => {
-    const fetchPokemonData = async () => {
-      try {
-        const response = await axios.get(url);
-        const data = response.data;
-        setPokemonData({
-          name: data.name,
-          height: data.height,
-          weight: data.weight,
-          // Add more properties as needed
-        });
-      } catch (error) {
-        console.error("Error fetching Pokemon data:", error);
-      }
-    };
+interface GameIndex {
+  game_index: number;
+  version: {
+    name: string;
+    url: string;
+  };
+}
 
-    fetchPokemonData();
-  }, [url]);
+interface Stat {
+  name: string;
+  url: string;
+}
 
-  if (!pokemonData) {
-    return <div>Loading...</div>;
-  }
+interface StatDetails {
+  base_stat: number;
+  effort: number;
+  stat: Stat;
+}
+
+interface Type {
+  name: string;
+  url: string;
+}
+
+interface TypeDetails {
+  slot: number;
+  type: Type;
+}
+
+interface PokemonDetails {
+  abilities: AbilityDetails[];
+  base_experience: number;
+  cries: {
+    latest: string;
+    legacy: string;
+  };
+  forms: Form[];
+  game_indices: GameIndex[];
+  height: number;
+  held_items: never[];
+  id: number;
+  is_default: boolean;
+  location_area_encounters: string;
+  moves: any[];
+  name: string;
+  order: number;
+  past_abilities: never[];
+  past_types: never[];
+  species: {
+    name: string;
+    url: string;
+  };
+  sprites: Record<string, string>;
+  stats: StatDetails[];
+  types: TypeDetails[];
+  weight: number;
+}
+
+interface PokemonDetailsProps {
+  pokemon: PokemonDetails;
+}
+
+const PokemonDetails: React.FC<PokemonDetailsProps> = ({ pokemon }) => {
+  const formattedStats = getFormattedStats(pokemon.stats as StatDetails[]); // Cast pokemon.stats to StatDetails[]
 
   return (
-    <div>
-      <h3>{pokemonData.name}</h3>
-      <p>Height: {pokemonData.height} dm</p>
-      <p>Weight: {pokemonData.weight} hg</p>
-      {/* Add more details as needed */}
+    <div className="pokemon-details">
+      <h2>{pokemon.name}</h2>
+      <p>Base Experience: {pokemon.base_experience}</p>
+      <p>Height: {convertUnits(pokemon.height)} m</p>
+      <p>Weight: {convertUnits(pokemon.weight)} kg</p>
+      <div className="abilities">
+        <h3>Abilities:</h3>
+        <ul>
+          {pokemon.abilities.map((ability) => (
+            <li key={ability.ability.name}>
+              {ability.ability.name} (Slot: {ability.slot}, Hidden:{" "}
+              {ability.is_hidden.toString()})
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="stats">
+        <p>
+          Stats:
+          <br />
+          {formattedStats}
+        </p>
+      </div>
+      {/* Render other details as needed */}
     </div>
   );
 };

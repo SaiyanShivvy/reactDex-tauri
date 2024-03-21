@@ -1,52 +1,68 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getPokemonData } from "../services/apiServices";
 import PokemonDetails from "./PokemonDetails";
 
-interface Pokemon {
+interface PokedexCardProps {
   name: string;
   url: string;
 }
 
-interface PokedexCardProps {
-  pokemon: Pokemon;
-}
+const PokedexCard: React.FC<PokedexCardProps> = ({ name, url }) => {
+  const [pokemonDetails, setPokemonDetails] = useState<any | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
-const PokedexCard: React.FC<PokedexCardProps> = ({ pokemon }) => {
   const handleShowModal = () => {
-    const modal = document.getElementById("detailsModal") as HTMLDialogElement;
-    if (modal) {
-      modal.showModal();
-    }
+    setShowModal(true);
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  useEffect(() => {
+    const fetchPokemonDetails = async () => {
+      try {
+        const response = await getPokemonData(name);
+        setPokemonDetails(response);
+      } catch (error) {
+        console.error("Error fetching Pokemon details:", error);
+      }
+    };
+
+    fetchPokemonDetails();
+  }, [url]);
+
+  if (!pokemonDetails) return <div>Loading Pokemon details...</div>;
+
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="card bg-base-100 w-96 shadow-xl">
       <figure className="px-10 pt-10">
         <img
-          src={`https://img.pokemondb.net/sprites/home/normal/${pokemon.name}.png`}
-          alt={pokemon.name}
+          src={`https://img.pokemondb.net/sprites/home/normal/${name}.png`}
+          alt={name}
           className="rounded-xl"
         />
       </figure>
       <div className="card-body items-center text-center">
-        <h2 className="card-title">{pokemon.name}</h2>
+        <h2 className="card-title">{name}</h2>
         <div className="card-actions">
           <button className="btn" onClick={handleShowModal}>
-            View Entry
+            View Details
           </button>
-          <dialog id="detailsModal" className="modal">
-            <div className="modal-box">
-				<PokemonDetails url={pokemon.url}/>
-              <p className="py-4">
-                Press ESC key or click the button below to close
-              </p>
-              <div className="modal-action">
-                <form method="dialog">
-                  {/* if there is a button in form, it will close the modal */}
-                  <button className="btn">Close</button>
-                </form>
+          {showModal && (
+            <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center">
+              <div className="absolute left-0 top-0 h-full w-full bg-black opacity-50"></div>
+              <div className="modal bg-base-100 z-50 rounded-lg p-6">
+                <button
+                  className="btn close-btn absolute right-4 top-4"
+                  onClick={handleCloseModal}
+                >
+                  Close
+                </button>
+                <PokemonDetails pokemon={pokemonDetails} />
               </div>
             </div>
-          </dialog>
+          )}
         </div>
       </div>
     </div>
