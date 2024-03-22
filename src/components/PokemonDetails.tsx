@@ -1,7 +1,8 @@
+import { useState } from "react";
 import {
-  calculateStatPercentage,
   convertUnits,
   getFormattedStats,
+  sanitizeInput,
 } from "../utility/utility";
 
 interface Ability {
@@ -49,6 +50,23 @@ interface TypeDetails {
   type: Type;
 }
 
+interface MoveType {
+  name: string;
+  url: string;
+}
+
+interface VersionGroupDetails {
+  level_learned_at: number;
+  move_learn_method: MoveType;
+  version_group: MoveType;
+}
+
+interface Move {
+  slot: number;
+  type?: MoveType;
+  version_group_details: VersionGroupDetails[];
+}
+
 interface PokemonDetails {
   abilities: AbilityDetails[];
   base_experience: number;
@@ -63,7 +81,7 @@ interface PokemonDetails {
   id: number;
   is_default: boolean;
   location_area_encounters: string;
-  moves: any[];
+  moves: Move[];
   name: string;
   order: number;
   past_abilities: never[];
@@ -83,11 +101,49 @@ interface PokemonDetailsProps {
 }
 
 const PokemonDetails: React.FC<PokemonDetailsProps> = ({ pokemon }) => {
-  const formattedStats = getFormattedStats(pokemon.stats as StatDetails[]); // Cast pokemon.stats to StatDetails[]
+  const [selectedVersion, setSelectedVersion] = useState<string>("");
+
+  const handleVersionSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedVersion(event.target.value);
+  };
+
+  // Filter moves based on selected game version
+  const filteredMoves = selectedVersion
+    ? pokemon.moves.filter((move) =>
+        move.version_group_details.some((detail) =>
+          detail.version_group.name.startsWith(selectedVersion),
+        ),
+      )
+    : pokemon.moves;
+
+  // Remove duplicate version group names
+  const uniqueVersionGroups = Array.from(
+    new Set(
+      pokemon.moves.flatMap((move) =>
+        move.version_group_details.map((detail) => detail.version_group.name),
+      ),
+    ),
+  );
+
+  console.log(filteredMoves);
 
   return (
     <div className="pokemon-details">
       <h2>{pokemon.name}</h2>
+      {/* Selector for game version */}
+      <label htmlFor="version">Select Version:</label>
+      <select
+        id="version"
+        value={selectedVersion}
+        onChange={handleVersionSelect}
+      >
+        <option value="">All Versions</option>
+        {uniqueVersionGroups.map((versionGroup) => (
+          <option key={versionGroup} value={versionGroup}>
+            {versionGroup}
+          </option>
+        ))}
+      </select>
       <p>Base Experience: {pokemon.base_experience}</p>
       <p>Height: {convertUnits(pokemon.height)} m</p>
       <p>Weight: {convertUnits(pokemon.weight)} kg</p>
@@ -102,12 +158,34 @@ const PokemonDetails: React.FC<PokemonDetailsProps> = ({ pokemon }) => {
           ))}
         </ul>
       </div>
-      <div className="stats">
+      <div>
         <p>
           Stats:
           <br />
-          {formattedStats}
+          {getFormattedStats(pokemon.stats as StatDetails[])}
         </p>
+      </div>
+      <div className="moves">
+        <h3>Moves:</h3>
+        {/* Display filtered moves */}
+        <ul>
+          {filteredMoves.map((move) => (
+            <li key={move.type?.name}>
+              {move.type?.name}
+              <ul>
+                {move.version_group_details.map((detail) => (
+                  <li
+                    key={`${detail.move_learn_method.name}-${detail.level_learned_at}-${detail.version_group.name}`}
+                  >
+                    Learned at Level {detail.level_learned_at} via{" "}
+                    {detail.move_learn_method.name} in{" "}
+                    {detail.version_group.name}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
       </div>
       {/* Render other details as needed */}
     </div>

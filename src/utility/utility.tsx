@@ -23,3 +23,8 @@ export function getFormattedStats(stats: any[]): string {
   const resultStats = [...evYieldStats, ...formattedStats].join("\n");
   return resultStats;
 }
+
+export function sanitizeInput(input: string): string {
+  // Remove any non-alphanumeric characters and convert to lowercase
+  return input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+}
