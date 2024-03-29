@@ -1,53 +1,60 @@
+# TODO:
+# - GetMoves
+# - GetStats
+# - GetBasicDetails
+# - GetLocationsbyGame
+# - GetEvolutions
+
 query GetPokemonEncounterLocation {
-    pokemon_v2_pokemon(distinct_on: id) {
-        id
-        name
-        order
-        pokemon_v2_encounters {
-            min_level
-            max_level
-            pokemon_v2_version {
-                name
-            }
-            pokemon_v2_locationarea {
-                name
-            }
-            pokemon_v2_encounterslot {
-                rarity
-                pokemon_v2_encountermethod {
-                    name
-                }
-            }
-        }
-    }
+	pokemon_v2_pokemon(distinct_on: id) {
+		id
+		name
+		order
+		pokemon_v2_encounters {
+			min_level
+			max_level
+			pokemon_v2_version {
+				name
+			}
+			pokemon_v2_locationarea {
+				name
+			}
+			pokemon_v2_encounterslot {
+				rarity
+				pokemon_v2_encountermethod {
+					name
+				}
+			}
+		}
+	}
 }
 
 query GetPokemonAbilities {
-    pokemon_v2_pokemon(distinct_on: id) {
-        id
-        name
-        order
-        pokemon_v2_pokemonabilities {
-            is_hidden
-            pokemon_v2_ability {
-                name
-                pokemon_v2_abilityeffecttexts(
-                    where: { language_id: { _eq: 9 } } #just get english text
-                ) {
-                    short_effect
-                }
-            }
-        }
-    }
+	pokemon_v2_pokemon(distinct_on: id) {
+		id
+		name
+		order
+		pokemon_v2_pokemonabilities {
+			is_hidden
+			pokemon_v2_ability {
+				name
+				pokemon_v2_abilityeffecttexts(
+					where: { language_id: { _eq: 9 } } #just get english text
+				) {
+					short_effect
+				}
+			}
+		}
+	}
 }
 
 query GetPokemonCries {
-    pokemon_v2_pokemon(distinct_on: id) {
-        id
-        name
-        order
-        pokemon_v2_pokemoncries {
-            cries
-        }
-    }
+	pokemon_v2_pokemon(distinct_on: id) {
+		id
+		name
+		order
+		pokemon_v2_pokemoncries {
+			cries
+		}
+	}
 }
