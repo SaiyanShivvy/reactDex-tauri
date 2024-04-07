@@ -1,4 +1,5 @@
 // apiService.ts
+// REST API Calls
 import axios from "axios";
 
 const BASE_URL = "https://pokeapi.co/api/v2/";
@@ -102,13 +103,52 @@ export const getMachineData = async (id: number): Promise<any> => {
 	}
 };
 
-export const getGenerationData = async (name: string): Promise<any> => {
-	const url = `${BASE_URL}machine/${name}`;
+// GraphQL Calls
+
+const gql_endpoint = "https://beta.pokeapi.co/graphql/v1beta";
+
+export async function getPokemonDetails(id: number) {
+	const query = `
+	`;
+
 	try {
-		const response = await axios.get(url);
+		const response = await axios.post(gql_endpoint, {
+			query: query,
+			variables: {
+				id: id,
+			},
+		});
 		return response.data;
 	} catch (error) {
-		console.error("Error getting Machine data: ", error);
+		console.error("Error fetching Pokemon ability:", error);
 		throw error;
 	}
-};
+}
+
+export async function getGameData() {
+	const query = `
+	query GenerationInfo {
+		generation: pokemon_v2_generation {
+			gen_name: name
+			gen_id: id
+			game_versions: pokemon_v2_versiongroups {
+				group_id: id
+				game_version: pokemon_v2_versions {
+					game_id: id
+					game_name: name
+				}
+			}
+		}
+	}
+	`;
+
+	try {
+		const response = await axios.post(gql_endpoint, {
+			query: query,
+		});
+		return response.data;
+	} catch (error) {
+		console.error("Error fetching Game Information:", error);
+		throw error;
+	}
+}

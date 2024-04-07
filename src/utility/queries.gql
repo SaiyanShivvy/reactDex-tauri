@@ -4,57 +4,152 @@
 # - GetBasicDetails
 # - GetLocationsbyGame
 # - GetEvolutions
+# - GetAbilities
 
-query GetPokemonEncounterLocation {
-	pokemon_v2_pokemon(distinct_on: id) {
+# Use PokemonSpecy Generation Id as the default for generation
+query PokemonInfo {
+	pokemon_v2_pokemon(where: { id: { _eq: 1 } }) {
 		id
 		name
-		order
-		pokemon_v2_encounters {
-			min_level
-			max_level
-			pokemon_v2_version {
-				name
-			}
-			pokemon_v2_locationarea {
-				name
-			}
-			pokemon_v2_encounterslot {
-				rarity
-				pokemon_v2_encountermethod {
-					name
-				}
-			}
-		}
-	}
-}
-
-query GetPokemonAbilities {
-	pokemon_v2_pokemon(distinct_on: id) {
-		id
-		name
-		order
+		base_experience
+		height
+		weight
 		pokemon_v2_pokemonabilities {
 			is_hidden
+			id
 			pokemon_v2_ability {
 				name
-				pokemon_v2_abilityeffecttexts(
-					where: { language_id: { _eq: 9 } } #just get english text
-				) {
-					short_effect
+			}
+		}
+		pokemon_v2_pokemontypes {
+			pokemon_v2_type {
+				name
+			}
+			slot
+		}
+		pokemon_v2_pokemonstats {
+			id
+			base_stat
+			effort
+			pokemon_v2_stat {
+				name
+			}
+		}
+		pokemon_v2_pokemonmoves {
+			id
+			level
+			move_id
+			pokemon_v2_move {
+				accuracy
+				move_effect_chance
+				name
+				power
+				pp
+				priority
+				pokemon_v2_type {
+					name
+				}
+				pokemon_v2_moveeffect {
+					pokemon_v2_moveeffecteffecttexts {
+						effect
+						short_effect
+					}
+				}
+			}
+			pokemon_v2_movelearnmethod {
+				name
+			}
+			pokemon_v2_versiongroup {
+				name
+				generation_id
+			}
+		}
+		pokemon_v2_pokemonspecy {
+			is_baby
+			is_legendary
+			is_mythical
+			capture_rate
+			base_happiness
+			generation_id
+			evolution_chain_id
+			evolves_from_species_id
+			pokemon_v2_growthrate {
+				name
+			}
+			pokemon_v2_evolutionchain {
+				baby_trigger_item_id
+				pokemon_v2_pokemonspecies {
+					evolution_chain_id
+					name
+					evolves_from_species_id
+					pokemon_v2_pokemonevolutions {
+						evolution_trigger_id
+						evolved_species_id
+						min_affection
+						min_beauty
+						min_happiness
+						min_level
+						needs_overworld_rain
+						party_species_id
+						party_type_id
+						known_move_id
+						known_move_type_id
+						location_id
+						gender_id
+						evolution_item_id
+						turn_upside_down
+						trade_species_id
+						time_of_day
+						relative_physical_stats
+						pokemon_v2_type {
+							name
+						}
+						pokemon_v2_move {
+							name
+						}
+						pokemon_v2_location {
+							name
+						}
+						pokemon_v2_item {
+							name
+						}
+						pokemon_v2_gender {
+							name
+						}
+						pokemon_v2_evolutiontrigger {
+							name
+						}
+						pokemonV2TypeByPartyTypeId {
+							name
+						}
+						pokemonV2PokemonspecyByTradeSpeciesId {
+							name
+						}
+						pokemonV2PokemonspecyByPartySpeciesId {
+							name
+						}
+						pokemonV2ItemByHeldItemId {
+							name
+						}
+					}
 				}
 			}
 		}
 	}
 }
 
-query GetPokemonCries {
-	pokemon_v2_pokemon(distinct_on: id) {
-		id
-		name
-		order
-		pokemon_v2_pokemoncries {
-			cries
+query GenerationInfo {
+	generation: pokemon_v2_generation {
+		gen_name: name
+		gen_id: id
+		game_versions: pokemon_v2_versiongroups {
+			group_id: id
+			game_version: pokemon_v2_versions {
+				game_id: id
+				game_name: name
+			}
 		}
 	}
 }
+
+## Should only display versions where the pokemon is avaliable

@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useMemo } from "react";
-import {
-	getPokemonData,
-	getGenerationData,
-	getMachineData,
-	getMoveData,
-	getPokemonSpeciesData,
-	getPokemonEggGroup,
-	getPokemonEvolutionChain,
-	getPokemonLocations,
-	getPokemonTypes,
-} from "../services/apiServices";
+import React, { useState, useEffect } from "react";
+import { getPokemonData } from "../services/apiServices";
 import PokemonDetails from "./PokemonDetails";
+
+/*
+
+TODO: 
+
+- Remove the fetch from here only PokemonDetails is able to fetch data using graphql
+
+*/
 
 interface PokedexCardProps {
 	name: string;
@@ -19,11 +17,6 @@ interface PokedexCardProps {
 
 const PokedexCard: React.FC<PokedexCardProps> = ({ name, url }) => {
 	const [pokemonDetails, setPokemonDetails] = useState<any | null>(null);
-	const [eggGroups, setEggGroups] = useState<any | null>(null);
-	const [evolutionChain, setEvolutionChain] = useState<any | null>(null);
-	const [pokemonTypes, setPokemonTypes] = useState<any | null>(null);
-	const [pokemonSpecies, setPokemonSpecies] = useState<any | null>(null);
-	const [pokemonLocations, setPokemonLocations] = useState<any | null>(null);
 	const [showModal, setShowModal] = useState(false);
 
 	const handleShowModal = () => {
