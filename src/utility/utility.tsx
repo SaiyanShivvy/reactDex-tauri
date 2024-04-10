@@ -25,19 +25,5 @@ export function getFormattedStats(stats: any[]): string {
 }
 
 export function sanitizeInput(input: string): string {
-	// Remove any non-alphanumeric characters and convert to lowercase
-	const sanitizedString = input.replace(/[^a-zA-Z0-9]/g, " ").toLowerCase();
-
-	// Split the sanitized string into words
-	const words = sanitizedString.split(" ");
-
-	// Capitalize the first letter of each word
-	const capitalizedWords = words.map(
-		(word) => word.charAt(0).toUpperCase() + word.slice(1)
-	);
-
-	// Join the capitalized words back into a string
-	const capitalizedString = capitalizedWords.join(" ");
-
-	return capitalizedString;
+	return input.replace(/[^a-zA-Z0-9]/g, " ");
 }

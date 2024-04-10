@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getPokemonData } from "../services/apiServices";
 import PokemonDetails from "./PokemonDetails";
+import { sanitizeInput } from "../utility/utility";
 
 /*
 
@@ -15,36 +16,12 @@ interface PokedexCardProps {
 	url: string;
 }
 
-const PokedexCard: React.FC<PokedexCardProps> = ({ name, url }) => {
-	const [pokemonDetails, setPokemonDetails] = useState<any | null>(null);
-	const [showModal, setShowModal] = useState(false);
-
-	const handleShowModal = () => {
-		setShowModal(true);
-	};
-
-	const handleCloseModal = () => {
-		setShowModal(false);
-	};
-
-	useEffect(() => {
-		const fetchPokemonDetails = async () => {
-			try {
-				const response = await getPokemonData(name);
-				setPokemonDetails(response);
-			} catch (error) {
-				console.error("Error fetching Pokemon details:", error);
-			}
-		};
-
-		fetchPokemonDetails();
-	}, [url]);
-
-	if (!pokemonDetails) return <div>Loading Pokemon details...</div>;
+const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
+	if (!name) return <div className='skeleton w-64 h-96'></div>;
 
 	return (
-		<div className='card bg-base-100 w-96 shadow-xl'>
-			<figure className='px-10 pt-10'>
+		<div className='card bg-base-100 w-64 h-96 shadow-xl'>
+			<figure>
 				<img
 					src={`https://img.pokemondb.net/sprites/home/normal/${name}.png`}
 					alt={name}
@@ -52,24 +29,32 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name, url }) => {
 				/>
 			</figure>
 			<div className='card-body items-center text-center'>
-				<h2 className='card-title'>{name}</h2>
+				<h2 className='card-title'>{name.toLocaleUpperCase()}</h2>
 				<div className='card-actions'>
-					<button className='btn' onClick={handleShowModal}>
+					<button
+						className='btn'
+						onClick={() =>
+							document.getElementById(name + `_details_modal`)?.showModal()
+						}>
 						View Details
 					</button>
-					{showModal && (
-						<div className='fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center'>
-							<div className='absolute left-0 top-0 h-full w-full bg-black opacity-50'></div>
-							<div className='modal bg-base-100 z-50 rounded-lg p-6'>
-								<button
-									className='btn close-btn absolute right-4 top-4'
-									onClick={handleCloseModal}>
-									Close
-								</button>
-								<PokemonDetails pokemon={pokemonDetails} />
+
+					{
+						<dialog
+							id={name + `_details_modal`}
+							className='modal modal-bottom sm:modal-middle'>
+							<div className='modal-box'>
+								<h1 className='font-bold text-lg'>{sanitizeInput(name)}</h1>
+								<PokemonDetails name={name} />
+								<div className='modal-action'>
+									<form method='dialog'>
+										{/* if there is a button in form, it will close the modal */}
+										<button className='btn'>Close</button>
+									</form>
+								</div>
 							</div>
-						</div>
-					)}
+						</dialog>
+					}
 				</div>
 			</div>
 		</div>

@@ -4,10 +4,13 @@ import axios from "axios";
 
 const BASE_URL = "https://pokeapi.co/api/v2/";
 
-export const getPokedex = async (limit: number): Promise<any> => {
-	const url = `${BASE_URL}pokemon?limit=${limit}`;
+export const getPokedex = async (url: string, limit: number): Promise<any> => {
+	if (!url) {
+		url = BASE_URL;
+	}
+	const api = `${url}pokemon?limit=${limit}`;
 	try {
-		const response = await axios.get(url);
+		const response = await axios.get(api);
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching Pokemon list:", error);

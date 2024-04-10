@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { convertUnits, sanitizeInput } from "../utility/utility";
-import { getGameData } from "../services/apiServices";
+import { getPokemonData } from "../services/apiServices";
+import GenerationSelector from "../components/GenerationSelector";
 
 /*
 TODO:
@@ -93,39 +94,19 @@ interface Pokemon {
 	moves: Moves[];
 }
 
-interface PokemonDetailsProps {
-	pokemon: Pokemon;
+interface PokedexCardProps {
+	name: string;
 }
 
-interface Games {
-	game_id: number;
-	game_name: string;
-}
-
-interface GameVersions {
-	group_id: number;
-	game_version: Games[];
-}
-
-interface PokemonGeneration {
-	gen_name: string;
-	gen_id: number;
-	game_versions: GameVersions[];
-}
-
-interface GenerationInfo {
-	generation: PokemonGeneration[];
-}
-
-const PokemonDetails: React.FC<PokemonDetailsProps> = ({ pokemon }) => {
+const PokemonDetails: React.FC<PokedexCardProps> = ({ name }) => {
 	const [loading, setLoading] = useState<boolean>(true);
-	const [gameData, setGameData] = useState<GenerationInfo | null>(null);
-	const [selectedGeneration, setSelectedGeneration] =
-		useState<PokemonGeneration | null>(null);
+	const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
+				const data = await getPokemonData(name);
+				setPokemonData(data);
 				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching details:", error);
@@ -134,70 +115,18 @@ const PokemonDetails: React.FC<PokemonDetailsProps> = ({ pokemon }) => {
 		};
 
 		fetchData();
-	}, [pokemon.id]);
-
-	useEffect(() => {
-		const fetchGameData = async () => {
-			try {
-				const data = await getGameData();
-				setGameData(data.data);
-			} catch (error) {
-				console.error("Error fetching Game Information:", error);
-			}
-		};
-		fetchGameData();
 	}, []);
 
-	const handleGenerationChange = (
-		event: React.ChangeEvent<HTMLSelectElement>
-	) => {
-		const selectedId = parseInt(event.target.value);
-		const generation = gameData?.generation.find(
-			(gen) => gen.gen_id === selectedId
-		);
-		setSelectedGeneration(generation || null);
-	};
-
-	if (loading || !gameData) {
-		return <div>Loading...</div>;
+	if (loading || !pokemonData) {
+		return <span className='loading loading-infinity loading-sm'></span>;
 	}
 
 	return (
 		<>
 			<div className='pokemon-details'>
-				<p>Base Experience: {pokemon.base_experience}</p>
-				<p>Height: {convertUnits(pokemon.height)} m</p>
-				<p>Weight: {convertUnits(pokemon.weight)} kg</p>
-			</div>
-			<div>
-				<label htmlFor='generation'>Select Generation:</label>
-				<select id='generation' onChange={handleGenerationChange}>
-					<option value=''>-- Select Generation --</option>
-					{gameData.generation.map((gen) => (
-						<option key={gen.gen_id} value={gen.gen_id}>
-							{sanitizeInput(gen.gen_name)}
-						</option>
-					))}
-				</select>
-
-				{selectedGeneration && selectedGeneration.game_versions && (
-					<div>
-						<ul>
-							{selectedGeneration.game_versions.map((group) => (
-								<li key={group.group_id}>
-									<span>
-										{group.game_version &&
-											group.game_version.map((game) => (
-												<li key={game.game_id}>
-													{sanitizeInput(game.game_name)}
-												</li>
-											))}
-									</span>
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
+				<p>Base Experience: {pokemonData.base_experience}</p>
+				<p>Height: {convertUnits(pokemonData.height)} m</p>
+				<p>Weight: {convertUnits(pokemonData.weight)} kg</p>
 			</div>
 		</>
 	);
