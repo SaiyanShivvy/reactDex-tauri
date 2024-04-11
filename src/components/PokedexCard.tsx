@@ -3,14 +3,6 @@ import { getPokemonData } from "../services/apiServices";
 import PokemonDetails from "./PokemonDetails";
 import { sanitizeInput } from "../utility/utility";
 
-/*
-
-TODO: 
-
-- Remove the fetch from here only PokemonDetails is able to fetch data using graphql
-
-*/
-
 interface PokedexCardProps {
 	name: string;
 	url: string;

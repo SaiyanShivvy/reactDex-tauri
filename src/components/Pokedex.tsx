@@ -7,6 +7,11 @@ interface PokedexEntry {
 	url: string;
 }
 
+/*
+TODO: 
+ - Fix the Scrollbar issue when expanding the modal
+*/
+
 const PokemonList: React.FC = (): JSX.Element => {
 	const [pokedex, setPokedex] = useState<PokedexEntry[]>([]);
 	const [nextPage, setNextPage] = useState<string | null>(null);
@@ -23,7 +28,7 @@ const PokemonList: React.FC = (): JSX.Element => {
 		}
 	};
 
-	const paginate = (url) => {
+	const paginate = (url: any) => {
 		if (url) {
 			fetchPokedex(url, 12);
 		}

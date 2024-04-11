@@ -123,10 +123,48 @@ const PokemonDetails: React.FC<PokedexCardProps> = ({ name }) => {
 
 	return (
 		<>
-			<div className='pokemon-details'>
-				<p>Base Experience: {pokemonData.base_experience}</p>
-				<p>Height: {convertUnits(pokemonData.height)} m</p>
-				<p>Weight: {convertUnits(pokemonData.weight)} kg</p>
+			<div role='tablist' className='tabs tabs-lifted'>
+				<input
+					type='radio'
+					name='pokemon_tabs'
+					role='tab'
+					className='tab tab-active'
+					aria-label='Details'
+				/>
+				<div
+					role='tabpanel'
+					className='tab-content bg-base-100 border-base-300 rounded-box p-6'>
+					<p>Base Experience: {pokemonData.base_experience}</p>
+					<p>Height: {convertUnits(pokemonData.height)} m</p>
+					<p>Weight: {convertUnits(pokemonData.weight)} kg</p>
+				</div>
+
+				<input
+					type='radio'
+					name='pokemon_tabs'
+					role='tab'
+					className='tab'
+					aria-label='Moves'
+					checked
+				/>
+				<div
+					role='tabpanel'
+					className='tab-content bg-base-100 border-base-300 rounded-box p-6'>
+					Tab content 2
+				</div>
+
+				<input
+					type='radio'
+					name='pokemon_tabs'
+					role='tab'
+					className='tab'
+					aria-label='Locations'
+				/>
+				<div
+					role='tabpanel'
+					className='tab-content bg-base-100 border-base-300 rounded-box p-6'>
+					Tab content 3
+				</div>
 			</div>
 		</>
 	);
