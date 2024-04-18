@@ -1,19 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { convertUnits, sanitizeInput } from "../utility/utility";
-import { getPokemonData } from "../services/apiServices";
+import { convertUnits } from "../utility/utility";
+import { getPokemonData, getPokemonDetails } from "../services/apiServices";
 import GenerationSelector from "../components/GenerationSelector";
-
-/*
-TODO:
-
-- Move out Generation handling from here to PokedexCard? tbh Genration selector is only for Moves. 
-	- Display the Games + Generation Name
-	- Display a tabed table for each game/ game groups
-
-- Test the GraphQL fetch for pokemon data.
-- The evolution chain will probably be the hard and it might be easier to fetch the data using the chain url
-and rest api
-*/
 
 interface Ability {
 	name: string;
@@ -70,17 +58,22 @@ interface MoveLearnMethod {
 	name: string;
 }
 
+interface Generation {
+	name: string;
+}
+
 interface VersionGroup {
 	name: string;
 	generation_id: number;
+	generation: Generation[];
 }
 
 interface Moves {
-	id: number;
+	move_id: number;
 	level: number;
 	move: Move[];
-	move_learn_method: MoveLearnMethod[];
-	version_group: VersionGroup[];
+	learn_method: MoveLearnMethod[];
+	game_version: VersionGroup[];
 }
 interface Pokemon {
 	id: number;
@@ -101,12 +94,15 @@ interface PokedexCardProps {
 const PokemonDetails: React.FC<PokedexCardProps> = ({ name }) => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
+	const [pokemonMoves, setPokemonMoves] = useState<[] | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				const data = await getPokemonData(name);
+				const gpl_data = await getPokemonDetails(name);
 				setPokemonData(data);
+				setPokemonMoves(gpl_data);
 				setLoading(false);
 			} catch (error) {
 				console.error("Error fetching details:", error);
@@ -117,9 +113,11 @@ const PokemonDetails: React.FC<PokedexCardProps> = ({ name }) => {
 		fetchData();
 	}, []);
 
-	if (loading || !pokemonData) {
+	if (loading) {
 		return <span className='loading loading-infinity loading-sm'></span>;
 	}
+
+	console.log(pokemonMoves);
 
 	return (
 		<>
@@ -134,9 +132,9 @@ const PokemonDetails: React.FC<PokedexCardProps> = ({ name }) => {
 				<div
 					role='tabpanel'
 					className='tab-content bg-base-100 border-base-300 rounded-box p-6'>
-					<p>Base Experience: {pokemonData.base_experience}</p>
-					<p>Height: {convertUnits(pokemonData.height)} m</p>
-					<p>Weight: {convertUnits(pokemonData.weight)} kg</p>
+					<p>Base Experience: {pokemonData!.base_experience}</p>
+					<p>Height: {convertUnits(pokemonData!.height)} m</p>
+					<p>Weight: {convertUnits(pokemonData!.weight)} kg</p>
 				</div>
 
 				<input
@@ -150,7 +148,23 @@ const PokemonDetails: React.FC<PokedexCardProps> = ({ name }) => {
 				<div
 					role='tabpanel'
 					className='tab-content bg-base-100 border-base-300 rounded-box p-6'>
-					Tab content 2
+					<h2>Move List</h2>
+					<ul>
+						{pokemonMoves.map((move: any) => (
+							<li key={move.move_id}>
+								<h3>{move.move.name}</h3>
+								<p>Level: {move.level}</p>
+								<p>Learn Method: {move.learn_method.name}</p>
+								<p>Version Group: {move.game_version.name}</p>
+								<p>Generation: {move.game_version.generation.name}</p>
+								<p>Accuracy: {move.move.accuracy || "Unknown"}</p>
+								<p>Power: {move.move.power || "Unknown"}</p>
+								<p>PP: {move.move.pp}</p>
+								<p>Priority: {move.move.priority}</p>
+								<p>Effect: {move.move.move_effect.effect_text[0].effect}</p>
+							</li>
+						))}
+					</ul>
 				</div>
 
 				<input

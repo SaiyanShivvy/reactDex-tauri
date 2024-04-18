@@ -30,12 +30,12 @@ const PokemonList: React.FC = (): JSX.Element => {
 
 	const paginate = (url: any) => {
 		if (url) {
-			fetchPokedex(url, 12);
+			fetchPokedex(url, 6);
 		}
 	};
 
 	useEffect(() => {
-		fetchPokedex("", 12);
+		fetchPokedex("", 6);
 	}, []);
 
 	if (!pokedex)

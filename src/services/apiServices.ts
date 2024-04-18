@@ -110,20 +110,55 @@ export const getMachineData = async (id: number): Promise<any> => {
 
 const gql_endpoint = "https://beta.pokeapi.co/graphql/v1beta";
 
-export async function getPokemonDetails(id: number) {
+export async function getPokemonDetails(name: string) {
 	const query = `
+	query GetPokemonDetails($name: String!) {
+		Moves: pokemon_v2_pokemonmove(where: {pokemon_v2_pokemon: {name: {_eq: $name}}}) {
+		  move_id
+		  level
+		  move_learn_method_id
+		  version_group_id
+		  game_version: pokemon_v2_versiongroup {
+			name
+			generation_id
+			generation: pokemon_v2_generation {
+			  name
+			}
+		  }
+		  learn_method: pokemon_v2_movelearnmethod {
+			name
+		  }
+		  move: pokemon_v2_move {
+			accuracy
+			name
+			move_effect: pokemon_v2_moveeffect {
+			  effect_text: pokemon_v2_moveeffecteffecttexts {
+				effect
+          		short_effect
+			  }
+			}
+			move_effect_chance
+			power
+			pp
+			priority
+			move_type: pokemon_v2_type {
+				name
+			  }
+		  }
+		}
+	  }
 	`;
 
 	try {
 		const response = await axios.post(gql_endpoint, {
 			query: query,
 			variables: {
-				id: id,
+				name: name,
 			},
 		});
-		return response.data;
+		return response.data.data;
 	} catch (error) {
-		console.error("Error fetching Pokemon ability:", error);
+		console.error("Error fetching data:", error);
 		throw error;
 	}
 }

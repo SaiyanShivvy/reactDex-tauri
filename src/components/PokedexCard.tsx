@@ -25,22 +25,23 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 				<div className='card-actions'>
 					<button
 						className='btn'
-						onClick={() =>
-							document.getElementById(name + `_details_modal`)?.showModal()
-						}>
+						onClick={() => {
+							return document
+								.getElementById(name + `_details_modal`)
+								?.showModal();
+						}}>
 						View Details
 					</button>
 
 					{
 						<dialog
 							id={name + `_details_modal`}
-							className='modal modal-bottom sm:modal-middle'>
-							<div className='modal-box'>
+							className='modal modal-bottom lg:modal-middle'>
+							<div className='modal-box w-5xl'>
 								<h1 className='font-bold text-lg'>{sanitizeInput(name)}</h1>
 								<PokemonDetails name={name} />
 								<div className='modal-action'>
 									<form method='dialog'>
-										{/* if there is a button in form, it will close the modal */}
 										<button className='btn'>Close</button>
 									</form>
 								</div>

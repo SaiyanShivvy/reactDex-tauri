@@ -69,6 +69,24 @@ const GenerationSelector: React.FC = () => {
 
 	return (
 		<div>
+			<label className='form-control w-full max-w-xs'>
+				<div className='label'>
+					<span className='label-text'>Select Generation:</span>
+				</div>
+
+				<select
+					id='generation'
+					className='select w-full max-w-xs'
+					onChange={handleGenerationChange}>
+					<option value=''>-- Select Generation --</option>
+					{gameData?.generation.map((gen) => (
+						<option key={gen.gen_id} value={gen.gen_id}>
+							{sanitizeInput(gen.gen_name).toLocaleUpperCase()}
+						</option>
+					))}
+				</select>
+			</label>
+
 			{selectedGeneration && selectedGeneration.game_versions && (
 				<label className='form-control w-full max-w-xs'>
 					<div className='label'>
@@ -89,24 +107,6 @@ const GenerationSelector: React.FC = () => {
 					</select>
 				</label>
 			)}
-
-			<label className='form-control w-full max-w-xs'>
-				<div className='label'>
-					<span className='label-text'>Select Generation:</span>
-				</div>
-
-				<select
-					id='generation'
-					className='select w-full max-w-xs'
-					onChange={handleGenerationChange}>
-					<option value=''>-- Select Generation --</option>
-					{gameData?.generation.map((gen) => (
-						<option key={gen.gen_id} value={gen.gen_id}>
-							{sanitizeInput(gen.gen_name).toLocaleUpperCase()}
-						</option>
-					))}
-				</select>
-			</label>
 		</div>
 	);
 };
