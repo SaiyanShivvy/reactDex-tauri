@@ -29,19 +29,7 @@ export const getPokemonData = async (name: string): Promise<any> => {
 	}
 };
 
-export const getPokemonEvolutionChain = async (id: number): Promise<any> => {
-	const url = `${BASE_URL}evolution-chain/${id}`;
-	try {
-		const response = await axios.get(url);
-		return response.data;
-	} catch (error) {
-		console.error("Error getting Evolution data: ", error);
-		throw error;
-	}
-};
-
-export const getPokemonSpeciesData = async (id: number): Promise<any> => {
-	const url = `${BASE_URL}pokemon-species/${id}`;
+export const getPokemonSpeciesData = async (url: string): Promise<any> => {
 	try {
 		const response = await axios.get(url);
 		return response.data;
@@ -51,8 +39,17 @@ export const getPokemonSpeciesData = async (id: number): Promise<any> => {
 	}
 };
 
-export const getPokemonEggGroup = async (id: number): Promise<any> => {
-	const url = `${BASE_URL}egg-group/${id}`;
+export const getPokemonEvolutionChain = async (url: string): Promise<any> => {
+	try {
+		const response = await axios.get(url);
+		return response.data;
+	} catch (error) {
+		console.error("Error getting Evolution data: ", error);
+		throw error;
+	}
+};
+
+export const getPokemonEggGroup = async (url: string): Promise<any> => {
 	try {
 		const response = await axios.get(url);
 		return response.data;
@@ -62,8 +59,7 @@ export const getPokemonEggGroup = async (id: number): Promise<any> => {
 	}
 };
 
-export const getPokemonTypes = async (id: number): Promise<any> => {
-	const url = `${BASE_URL}type/${id}`;
+export const getPokemonTypes = async (url: string): Promise<any> => {
 	try {
 		const response = await axios.get(url);
 		return response.data;
@@ -73,8 +69,7 @@ export const getPokemonTypes = async (id: number): Promise<any> => {
 	}
 };
 
-export const getPokemonLocations = async (id: number): Promise<any> => {
-	const url = `${BASE_URL}pokemon/${id}/encounters`;
+export const getPokemonLocations = async (url: string): Promise<any> => {
 	try {
 		const response = await axios.get(url);
 		return response.data;
@@ -84,8 +79,7 @@ export const getPokemonLocations = async (id: number): Promise<any> => {
 	}
 };
 
-export const getMoveData = async (name: string): Promise<any> => {
-	const url = `${BASE_URL}move/${name}`;
+export const getMoveData = async (url: string): Promise<any> => {
 	try {
 		const response = await axios.get(url);
 		return response.data;
@@ -95,8 +89,17 @@ export const getMoveData = async (name: string): Promise<any> => {
 	}
 };
 
-export const getMachineData = async (id: number): Promise<any> => {
-	const url = `${BASE_URL}machine/${id}`;
+export const getMachineData = async (url: string): Promise<any> => {
+	try {
+		const response = await axios.get(url);
+		return response.data;
+	} catch (error) {
+		console.error("Error getting Machine data: ", error);
+		throw error;
+	}
+};
+
+export const getLocationArea = async (url: string): Promise<any> => {
 	try {
 		const response = await axios.get(url);
 		return response.data;

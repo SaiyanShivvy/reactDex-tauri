@@ -9,6 +9,17 @@ interface PokedexCardProps {
 }
 
 const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const openModal = () => {
+		setIsModalOpen(true);
+		document.getElementById(name + `_details_modal`)?.showModal();
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
+
 	if (!name) return <div className='skeleton w-64 h-96'></div>;
 
 	return (
@@ -26,9 +37,7 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 					<button
 						className='btn'
 						onClick={() => {
-							return document
-								.getElementById(name + `_details_modal`)
-								?.showModal();
+							openModal();
 						}}>
 						View Details
 					</button>
@@ -38,11 +47,15 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 							id={name + `_details_modal`}
 							className='modal modal-bottom lg:modal-middle'>
 							<div className='modal-box w-5xl'>
-								<h1 className='font-bold text-lg'>{sanitizeInput(name)}</h1>
-								<PokemonDetails name={name} />
+								<h1 className='font-bold text-lg'>
+									{sanitizeInput(name).toLocaleUpperCase()}
+								</h1>
+								<PokemonDetails name={name} isModalOpen={isModalOpen} />
 								<div className='modal-action'>
 									<form method='dialog'>
-										<button className='btn'>Close</button>
+										<button className='btn' onClick={closeModal}>
+											Close
+										</button>
 									</form>
 								</div>
 							</div>
