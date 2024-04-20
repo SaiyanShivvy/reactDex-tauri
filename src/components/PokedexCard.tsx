@@ -5,11 +5,9 @@ import { sanitizeInput } from "../utility/utility";
 
 interface PokedexCardProps {
 	name: string;
-	url: string;
 }
 
 const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
-	console.log(name);
 	const [modalStates, setModalStates] = useState({});
 
 	const openModal = (modalName: any) => {

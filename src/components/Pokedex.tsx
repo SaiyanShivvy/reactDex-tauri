@@ -129,12 +129,12 @@ const PokemonList: React.FC = (): JSX.Element => {
 			<div className='flex flex-wrap'>
 				{searchQuery !== "" ? (
 					<div key={searchQuery} className='w-1/4 p-4'>
-						<PokedexCard name={searchQuery} url={""} />
+						<PokedexCard name={searchQuery} />
 					</div>
 				) : (
 					pokedex.map((pokemon: any) => (
 						<div key={pokemon.name} className='w-1/4 p-4'>
-							<PokedexCard name={pokemon.name} url={pokemon.url} />
+							<PokedexCard name={pokemon.name} />
 						</div>
 					))
 				)}
