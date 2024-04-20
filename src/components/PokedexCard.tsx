@@ -9,15 +9,22 @@ interface PokedexCardProps {
 }
 
 const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	console.log(name);
+	const [modalStates, setModalStates] = useState({});
 
-	const openModal = () => {
-		setIsModalOpen(true);
+	const openModal = (modalName: any) => {
+		setModalStates((prevState) => ({
+			...prevState,
+			[modalName]: true,
+		}));
 		document.getElementById(name + `_details_modal`)?.showModal();
 	};
 
-	const closeModal = () => {
-		setIsModalOpen(false);
+	const closeModal = (modalName: any) => {
+		setModalStates((prevState) => ({
+			...prevState,
+			[modalName]: false,
+		}));
 	};
 
 	if (!name) return <div className='skeleton w-64 h-96'></div>;
@@ -37,7 +44,7 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 					<button
 						className='btn'
 						onClick={() => {
-							openModal();
+							openModal(name + `_details_modal`);
 						}}>
 						View Details
 					</button>
@@ -50,7 +57,7 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 								<h1 className='font-bold text-lg'>
 									{sanitizeInput(name).toLocaleUpperCase()}
 								</h1>
-								<PokemonDetails name={name} isModalOpen={isModalOpen} />
+								<PokemonDetails name={name} modalStates={modalStates} />
 								<div className='modal-action'>
 									<form method='dialog'>
 										<button className='btn' onClick={closeModal}>

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { convertUnits } from "../utility/utility";
+import { convertUnits, sanitizeInput } from "../utility/utility";
 import { Pokemon, PokemonSpecies } from "../common/models/Pokemon/Pokemon";
 import { getPokemonData, getPokemonSpeciesData } from "../services/apiServices";
 
 interface PokedexCardProps {
 	name: string;
-	isModalOpen: boolean;
+	modalStates: any;
 }
 
-const PokemonDetails: React.FC<PokedexCardProps> = ({ name, isModalOpen }) => {
+const PokemonDetails: React.FC<PokedexCardProps> = ({ name, modalStates }) => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
 	const [pokemonSpeciesData, setPokemonSpeciesData] =
@@ -28,8 +28,11 @@ const PokemonDetails: React.FC<PokedexCardProps> = ({ name, isModalOpen }) => {
 			}
 		};
 
-		fetchData();
-	}, [isModalOpen, name]);
+		console.log("Fetch: ", modalStates[name + `_details_modal`]);
+		if (modalStates[name + `_details_modal`]) {
+			fetchData();
+		}
+	}, [modalStates, name]);
 
 	if (loading) {
 		return <span className='loading loading-infinity loading-sm'></span>;
@@ -43,12 +46,12 @@ const PokemonDetails: React.FC<PokedexCardProps> = ({ name, isModalOpen }) => {
 			<ul>
 				<span>Abilities:</span>
 				{pokemonData!.abilities.map((ability, index) => (
-					<li key={index}>
+					<ul key={index}>
 						<li className='join-item'>
-							{ability.ability.name.toLocaleUpperCase()}
+							{sanitizeInput(ability.ability.name).toLocaleUpperCase()}
 							{ability.is_hidden ? <sub> (Hidden)</sub> : ""}
 						</li>
-					</li>
+					</ul>
 				))}
 			</ul>
 		</>

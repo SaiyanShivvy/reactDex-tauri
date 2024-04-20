@@ -7,8 +7,10 @@ function App() {
 	return (
 		<div className='App'>
 			<NavBar />
-			<div className='content'>
-				<PokemonList />
+			<div className='content-scrollable'>
+				<div className='content'>
+					<PokemonList />
+				</div>
 			</div>
 			<Footer />
 		</div>

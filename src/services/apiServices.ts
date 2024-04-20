@@ -25,7 +25,6 @@ export const getPokemonData = async (name: string): Promise<any> => {
 		return response.data;
 	} catch (error) {
 		console.error("Error fetching Pokemon data:", error);
-		throw error;
 	}
 };
 
