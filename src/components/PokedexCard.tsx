@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getPokemonData } from "../services/apiServices";
 import PokemonDetails from "./PokemonDetails";
 import { sanitizeInput } from "../utility/utility";
+import { getPokedex } from "../services/apiServices";
+import axios from "axios";
 
 interface PokedexCardProps {
 	name: string;
@@ -9,7 +10,7 @@ interface PokedexCardProps {
 
 const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 	const [modalStates, setModalStates] = useState({});
-
+	const imageUrl = `https://img.pokemondb.net/sprites/home/normal/${name}.png`;
 	const openModal = (modalName: any) => {
 		setModalStates((prevState) => ({
 			...prevState,
@@ -25,16 +26,12 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 		}));
 	};
 
-	if (!name) return <div className='skeleton w-64 h-96'></div>;
+	if (!name && !imageUrl) return <div className='skeleton w-64 h-96'></div>;
 
 	return (
 		<div className='card bg-base-100 w-64 h-96 shadow-xl'>
 			<figure>
-				<img
-					src={`https://img.pokemondb.net/sprites/home/normal/${name}.png`}
-					alt={name}
-					className='rounded-xl'
-				/>
+				<img src={imageUrl} alt={name} className='rounded-xl' />
 			</figure>
 			<div className='card-body items-center text-center'>
 				<h2 className='card-title'>{name.toLocaleUpperCase()}</h2>

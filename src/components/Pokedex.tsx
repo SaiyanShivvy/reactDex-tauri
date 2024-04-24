@@ -70,7 +70,6 @@ const PokemonList: React.FC = (): JSX.Element => {
 	const handleSelectSuggestion = (suggestion: any) => {
 		setSearchQuery(suggestion.name);
 		setOpen(false);
-		setSearchSuggestions([]);
 	};
 
 	if (!pokedex)
@@ -96,7 +95,10 @@ const PokemonList: React.FC = (): JSX.Element => {
 						xmlns='http://www.w3.org/2000/svg'
 						viewBox='0 0 16 16'
 						fill='currentColor'
-						className='w-4 h-4 opacity-70'>
+						className='w-4 h-4 opacity-70'
+						onClick={() => {
+							setOpen(true);
+						}}>
 						<path
 							fillRule='evenodd'
 							d='M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z'
@@ -118,7 +120,7 @@ const PokemonList: React.FC = (): JSX.Element => {
 										setOpen(false);
 									}}
 									className='border-b border-b-base-content/10 w-full'>
-									<button>{suggestion.name.toUpperCase()}</button>
+									<span>{suggestion.name.toUpperCase()}</span>
 								</li>
 							))}
 						</ul>
@@ -127,17 +129,30 @@ const PokemonList: React.FC = (): JSX.Element => {
 			</div>
 
 			<div className='flex flex-wrap'>
-				{searchQuery !== "" ? (
-					<div key={searchQuery} className='w-1/4 p-4'>
-						<PokedexCard name={searchQuery} />
-					</div>
-				) : (
-					pokedex.map((pokemon: any) => (
-						<div key={pokemon.name} className='w-1/4 p-4'>
-							<PokedexCard name={pokemon.name} />
+				{searchQuery.trim() !== "" &&
+					!searchSuggestions.some(
+						(suggestion) => suggestion.name.toLowerCase() === searchQuery
+					) && (
+						<div key={searchQuery} className='w-1/4 p-4'>
+							<p>No results found for "{searchQuery}"</p>
 						</div>
-					))
-				)}
+					)}
+
+				{searchQuery.trim() === ""
+					? pokedex.map((pokemon: any) => (
+							<div key={pokemon.name} className='w-1/4 p-4'>
+								<PokedexCard name={pokemon.name} />
+							</div>
+					  ))
+					: searchSuggestions
+							.filter(
+								(suggestion) => suggestion.name.toLowerCase() === searchQuery
+							)
+							.map((suggestion, index) => (
+								<div key={index} className='w-1/4 p-4'>
+									<PokedexCard name={suggestion.name} />
+								</div>
+							))}
 			</div>
 			<div className='join grid grid-cols-2'>
 				<button
