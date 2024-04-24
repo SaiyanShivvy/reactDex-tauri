@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { getPokedex, getPokemonData } from "../services/apiServices";
+import { getPokedex } from "../services/apiServices";
 import PokedexCard from "./PokedexCard";
-import { Pokemon } from "../common/models/Pokemon/Pokemon";
 import classNames from "classnames";
 
 interface PokedexEntry {

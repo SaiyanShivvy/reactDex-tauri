@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PokemonDetails from "./PokemonDetails";
 import { sanitizeInput } from "../utility/utility";
-import { getPokedex } from "../services/apiServices";
-import axios from "axios";
 
 interface PokedexCardProps {
 	name: string;
@@ -47,7 +45,7 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 					{
 						<dialog
 							id={name + `_details_modal`}
-							className='modal modal-bottom lg:modal-middle'>
+							className='modal modal-bottom flex flex-grow'>
 							<div className='modal-box w-5xl'>
 								<h1 className='font-bold text-lg'>
 									{sanitizeInput(name).toLocaleUpperCase()}
