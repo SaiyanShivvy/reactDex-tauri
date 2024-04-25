@@ -50,6 +50,7 @@ const PokedexCard: React.FC<PokedexCardProps> = ({ name }) => {
 								<h1 className='font-bold text-lg'>
 									{sanitizeInput(name).toLocaleUpperCase()}
 								</h1>
+
 								<PokemonDetails name={name} modalStates={modalStates} />
 								<div className='modal-action'>
 									<form method='dialog'>
